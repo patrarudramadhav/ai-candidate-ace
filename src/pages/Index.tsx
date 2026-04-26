@@ -78,6 +78,7 @@ const Index = () => {
           interestScore,
           interestJustification: score?.interestJustification ?? "No analysis returned.",
           chatTranscript: score?.chatTranscript ?? [],
+          skillBreakdown: score?.skillBreakdown ?? [],
           weightedScore: matchScore * 0.6 + interestScore * 0.4,
           rank: 0,
         };
