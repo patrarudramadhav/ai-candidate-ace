@@ -57,6 +57,12 @@ For EACH candidate return:
   Keep each message under 220 characters. Make it feel like a real DM, not corporate jargon.
 - interestScore (0-100): derive this DIRECTLY from the simulated chatTranscript you just wrote. If the candidate's replies sound dismissive, busy, or happy where they are → low score. If they sound curious, available, or actively looking → high score. Mid/junior candidates and those in misaligned domains for the JD typically score lower on interest because the role isn't relevant to them.
 - interestJustification: exactly 2 sentences explaining the interest score, citing specific phrasing or signals from the simulated chat.
+- skillBreakdown: an array of 4-6 entries identifying the MOST IMPORTANT skills/requirements extracted FROM THE JD (not from the candidate). For each:
+    * skill: short name of the JD requirement (e.g. "TypeScript", "5+ yrs experience", "Fintech domain", "Team leadership").
+    * weight (1-10): how heavily this requirement influenced the overall match score for THIS candidate. Higher = more decisive.
+    * status: "match" if the candidate clearly has it, "partial" if related/transferable, "missing" if absent.
+    * reason: ONE short sentence (under 120 chars) explaining why, citing the candidate's actual data.
+  Order entries by weight descending. Be honest — a misaligned candidate should show mostly "missing".
 
 Return one entry per candidate via the score_candidates tool. Do not skip anyone.`;
 
@@ -100,6 +106,22 @@ ${JSON.stringify(candidates, null, 2)}`;
                       additionalProperties: false,
                     },
                   },
+                  skillBreakdown: {
+                    type: "array",
+                    minItems: 3,
+                    maxItems: 6,
+                    items: {
+                      type: "object",
+                      properties: {
+                        skill: { type: "string" },
+                        weight: { type: "number", minimum: 1, maximum: 10 },
+                        status: { type: "string", enum: ["match", "partial", "missing"] },
+                        reason: { type: "string" },
+                      },
+                      required: ["skill", "weight", "status", "reason"],
+                      additionalProperties: false,
+                    },
+                  },
                 },
                 required: [
                   "id",
@@ -108,6 +130,7 @@ ${JSON.stringify(candidates, null, 2)}`;
                   "interestScore",
                   "interestJustification",
                   "chatTranscript",
+                  "skillBreakdown",
                 ],
                 additionalProperties: false,
               },
