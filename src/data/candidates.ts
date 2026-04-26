@@ -3,7 +3,7 @@ export type Candidate = {
   name: string;
   currentRole: string;
   yearsExperience: number;
-  seniority: "Junior" | "Mid" | "Senior" | "Staff" | "Manager";
+  seniority: "Junior" | "Mid" | "Senior" | "Staff" | "Manager" | "Lead" | "Expert";
   location: string;
   skills: string[];
 };
@@ -11,6 +11,73 @@ export type Candidate = {
 export const CANDIDATES: Candidate[] = [
   {
     id: "c1",
+    name: "Meera Joshi",
+    currentRole: "Financial Analyst @ Aditya Birla Capital",
+    yearsExperience: 5,
+    seniority: "Mid",
+    location: "Mumbai, India",
+    skills: [
+      "Excel",
+      "Cost Accounting",
+      "Financial Modeling",
+      "Variance Analysis",
+      "Power BI",
+      "Tally",
+      "IFRS",
+    ],
+  },
+  {
+    id: "c2",
+    name: "Lakshmi Narayanan",
+    currentRole: "Program Director @ Sevalaya NGO",
+    yearsExperience: 12,
+    seniority: "Manager",
+    location: "Chennai, India",
+    skills: [
+      "NGO Management",
+      "Trust Registration",
+      "FCRA Compliance",
+      "Grant Writing",
+      "Community Outreach",
+      "Stakeholder Engagement",
+      "12A & 80G Filing",
+    ],
+  },
+  {
+    id: "c3",
+    name: "Subrat Maharana",
+    currentRole: "Independent Traditional Artist · Raghurajpur",
+    yearsExperience: 18,
+    seniority: "Expert",
+    location: "Puri, Odisha, India",
+    skills: [
+      "Pattachitra",
+      "Pencil-Colored Composition",
+      "Natural Pigment Preparation",
+      "Tussar Silk Painting",
+      "Mythological Iconography",
+      "Palm-Leaf Etching",
+    ],
+  },
+  {
+    id: "c4",
+    name: "Priya Iyer",
+    currentRole: "Full-Stack Software Engineer @ Freshworks",
+    yearsExperience: 4,
+    seniority: "Mid",
+    location: "Bengaluru, India",
+    skills: [
+      "TypeScript",
+      "React",
+      "Node.js",
+      "PostgreSQL",
+      "GraphQL",
+      "Docker",
+      "AWS",
+    ],
+  },
+  {
+    id: "c5",
     name: "Aarav Sharma",
     currentRole: "Senior Backend Engineer @ Razorpay",
     yearsExperience: 8,
@@ -19,25 +86,7 @@ export const CANDIDATES: Candidate[] = [
     skills: ["Go", "Python", "PostgreSQL", "Kafka", "Microservices", "AWS", "gRPC"],
   },
   {
-    id: "c2",
-    name: "Priya Iyer",
-    currentRole: "Full-Stack Engineer @ Freshworks",
-    yearsExperience: 4,
-    seniority: "Mid",
-    location: "Chennai, India",
-    skills: ["TypeScript", "React", "Node.js", "PostgreSQL", "GraphQL", "Docker"],
-  },
-  {
-    id: "c3",
-    name: "Rohan Mehta",
-    currentRole: "Frontend Developer @ early-stage startup",
-    yearsExperience: 2,
-    seniority: "Junior",
-    location: "Pune, India",
-    skills: ["React", "TypeScript", "TailwindCSS", "Next.js", "Figma"],
-  },
-  {
-    id: "c4",
+    id: "c6",
     name: "Dr. Ananya Verma",
     currentRole: "ML Research Engineer @ Google DeepMind",
     yearsExperience: 7,
@@ -46,7 +95,7 @@ export const CANDIDATES: Candidate[] = [
     skills: ["PyTorch", "LLMs", "RAG", "Transformers", "Python", "CUDA", "Distributed Training"],
   },
   {
-    id: "c5",
+    id: "c7",
     name: "Karthik Reddy",
     currentRole: "Engineering Manager @ Swiggy",
     yearsExperience: 11,
@@ -55,21 +104,12 @@ export const CANDIDATES: Candidate[] = [
     skills: ["Leadership", "System Design", "Java", "Kubernetes", "Hiring", "Mentoring"],
   },
   {
-    id: "c6",
+    id: "c8",
     name: "Neha Kapoor",
     currentRole: "DevOps / SRE @ Zomato",
     yearsExperience: 6,
     seniority: "Senior",
     location: "Gurugram, India",
     skills: ["Kubernetes", "Terraform", "AWS", "Prometheus", "CI/CD", "Linux", "Python"],
-  },
-  {
-    id: "c7",
-    name: "Vikram Singh",
-    currentRole: "Staff Software Engineer @ Atlassian",
-    yearsExperience: 12,
-    seniority: "Staff",
-    location: "Sydney, Australia",
-    skills: ["Java", "Spring", "AWS", "System Design", "React", "Mentoring"],
   },
 ];
