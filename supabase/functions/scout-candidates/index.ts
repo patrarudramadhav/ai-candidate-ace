@@ -43,16 +43,20 @@ Deno.serve(async (req) => {
       return json({ error: "Provide between 1 and 25 candidates." }, 400);
     }
 
-    const systemPrompt = `You are an experienced technical recruiter scoring candidates against a Job Description.
-Score conservatively and ground every justification in the actual candidate data.
+    const systemPrompt = `You are an experienced recruiter scoring candidates against a Job Description across diverse domains (technology, finance, social sector, traditional arts, etc.).
+Score conservatively and ground every justification in the actual candidate data and JD.
 
 For EACH candidate return:
-- matchScore (0-100): how well their skills, seniority, and experience align with the JD.
+- matchScore (0-100): how well their skills, seniority, and experience align with the JD. A traditional artist scored against a software JD should get a very low matchScore — be honest.
 - matchJustification: exactly 2 sentences. State what aligns, then what's missing or weaker.
-- interestScore (0-100): likelihood this person would be open to moving, reasoned from their seniority,
-  current employer prestige, years of experience, and how appealing the JD likely is to them.
-  Senior people at top-tier companies are typically harder to move (lower interest). Mid/junior are usually more open.
-- interestJustification: exactly 2 sentences explaining the interest score using their current role and seniority.
+- chatTranscript: a SIMULATED outreach chat with EXACTLY 4 messages alternating: agent, candidate, agent, candidate.
+    * Message 1 (agent): warm intro mentioning the specific role from the JD and why this candidate caught your eye (reference one of their actual skills or current role).
+    * Message 2 (candidate): a realistic, in-character reply about their current situation. Tone must reflect their seniority and domain — a Staff engineer at a top firm sounds different from a junior, a traditional artist sounds different from a fintech analyst.
+    * Message 3 (agent): a focused follow-up about availability, compensation expectations, or interest level.
+    * Message 4 (candidate): a candid response that reveals how open (or not) they are to moving.
+  Keep each message under 220 characters. Make it feel like a real DM, not corporate jargon.
+- interestScore (0-100): derive this DIRECTLY from the simulated chatTranscript you just wrote. If the candidate's replies sound dismissive, busy, or happy where they are → low score. If they sound curious, available, or actively looking → high score. Mid/junior candidates and those in misaligned domains for the JD typically score lower on interest because the role isn't relevant to them.
+- interestJustification: exactly 2 sentences explaining the interest score, citing specific phrasing or signals from the simulated chat.
 
 Return one entry per candidate via the score_candidates tool. Do not skip anyone.`;
 
@@ -68,7 +72,7 @@ ${JSON.stringify(candidates, null, 2)}`;
       type: "function",
       function: {
         name: "score_candidates",
-        description: "Return scoring for every candidate.",
+        description: "Return scoring and a simulated outreach chat for every candidate.",
         parameters: {
           type: "object",
           properties: {
@@ -82,8 +86,29 @@ ${JSON.stringify(candidates, null, 2)}`;
                   matchJustification: { type: "string" },
                   interestScore: { type: "number", minimum: 0, maximum: 100 },
                   interestJustification: { type: "string" },
+                  chatTranscript: {
+                    type: "array",
+                    minItems: 4,
+                    maxItems: 4,
+                    items: {
+                      type: "object",
+                      properties: {
+                        from: { type: "string", enum: ["agent", "candidate"] },
+                        text: { type: "string" },
+                      },
+                      required: ["from", "text"],
+                      additionalProperties: false,
+                    },
+                  },
                 },
-                required: ["id", "matchScore", "matchJustification", "interestScore", "interestJustification"],
+                required: [
+                  "id",
+                  "matchScore",
+                  "matchJustification",
+                  "interestScore",
+                  "interestJustification",
+                  "chatTranscript",
+                ],
                 additionalProperties: false,
               },
             },

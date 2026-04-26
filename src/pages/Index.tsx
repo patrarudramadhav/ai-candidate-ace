@@ -31,10 +31,11 @@ const Index = () => {
   const [results, setResults] = useState<ScoredCandidate[] | null>(null);
   const [selected, setSelected] = useState<ScoredCandidate | null>(null);
 
-  const sortedResults = useMemo(
-    () => (results ? [...results].sort((a, b) => b.matchScore - a.matchScore) : null),
-    [results],
-  );
+  const sortedResults = useMemo(() => {
+    if (!results) return null;
+    const ranked = [...results].sort((a, b) => b.weightedScore - a.weightedScore);
+    return ranked.map((c, i) => ({ ...c, rank: i + 1 }));
+  }, [results]);
 
   async function handleScout() {
     if (jd.trim().length < 20) {
@@ -68,12 +69,17 @@ const Index = () => {
       const ai = (data?.results ?? []) as AIScore[];
       const merged: ScoredCandidate[] = CANDIDATES.map((c) => {
         const score = ai.find((s) => s.id === c.id);
+        const matchScore = score?.matchScore ?? 0;
+        const interestScore = score?.interestScore ?? 0;
         return {
           ...c,
-          matchScore: score?.matchScore ?? 0,
+          matchScore,
           matchJustification: score?.matchJustification ?? "No analysis returned.",
-          interestScore: score?.interestScore ?? 0,
+          interestScore,
           interestJustification: score?.interestJustification ?? "No analysis returned.",
+          chatTranscript: score?.chatTranscript ?? [],
+          weightedScore: matchScore * 0.6 + interestScore * 0.4,
+          rank: 0,
         };
       });
       setResults(merged);
@@ -95,6 +101,7 @@ const Index = () => {
   function handleExport() {
     if (!sortedResults) return;
     const rows = sortedResults.map((c) => ({
+      Rank: c.rank,
       Name: c.name,
       "Current Role": c.currentRole,
       "Years Experience": c.yearsExperience,
@@ -105,6 +112,10 @@ const Index = () => {
       "Match Justification": c.matchJustification,
       "Interest Score": c.interestScore,
       "Interest Justification": c.interestJustification,
+      "Weighted Score": c.weightedScore.toFixed(1),
+      "Chat Transcript": c.chatTranscript
+        .map((m) => `${m.from === "agent" ? "Agent" : c.name.split(" ")[0]}: ${m.text}`)
+        .join(" | "),
     }));
     const date = new Date().toISOString().slice(0, 10);
     downloadCSV(`talent-shortlist-${date}.csv`, toCSV(rows));
@@ -215,9 +226,9 @@ const Index = () => {
               <div className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4 text-primary" />
                 <h2 className="text-base font-semibold text-foreground">
-                  Shortlist
+                  Ranked Shortlist
                   <span className="ml-2 text-sm font-normal text-muted-foreground">
-                    {sortedResults.length} candidates · sorted by match
+                    {sortedResults.length} candidates · weighted = match × 0.6 + interest × 0.4
                   </span>
                 </h2>
               </div>
@@ -231,16 +242,29 @@ const Index = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-14 text-center">Rank</TableHead>
                     <TableHead>Candidate</TableHead>
                     <TableHead className="hidden md:table-cell">Current Role</TableHead>
                     <TableHead className="text-center">Match</TableHead>
                     <TableHead className="text-center">Interest</TableHead>
+                    <TableHead className="text-center">Weighted</TableHead>
                     <TableHead className="text-right">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {sortedResults.map((c) => (
                     <TableRow key={c.id}>
+                      <TableCell className="text-center">
+                        <span
+                          className={`inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-xs font-semibold ${
+                            c.rank === 1
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-secondary text-secondary-foreground"
+                          }`}
+                        >
+                          #{c.rank}
+                        </span>
+                      </TableCell>
                       <TableCell>
                         <div className="font-medium text-foreground">{c.name}</div>
                         <div className="text-xs text-muted-foreground md:hidden">{c.currentRole}</div>
@@ -253,6 +277,11 @@ const Index = () => {
                       </TableCell>
                       <TableCell className="text-center">
                         <ScoreBadge score={c.interestScore} />
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <span className="text-sm font-semibold text-foreground">
+                          {c.weightedScore.toFixed(1)}
+                        </span>
                       </TableCell>
                       <TableCell className="text-right">
                         <Button size="sm" variant="ghost" onClick={() => setSelected(c)}>
