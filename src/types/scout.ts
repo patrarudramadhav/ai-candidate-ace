@@ -5,6 +5,13 @@ export type ChatMessage = {
   text: string;
 };
 
+export type SkillInfluence = {
+  skill: string;
+  weight: number; // 1-10
+  status: "match" | "partial" | "missing";
+  reason: string;
+};
+
 export type AIScore = {
   id: string;
   matchScore: number;
@@ -12,6 +19,7 @@ export type AIScore = {
   interestScore: number;
   interestJustification: string;
   chatTranscript: ChatMessage[];
+  skillBreakdown: SkillInfluence[];
 };
 
 export type ScoredCandidate = Candidate &
