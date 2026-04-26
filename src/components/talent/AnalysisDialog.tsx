@@ -6,8 +6,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScoreBadge } from "./ScoreBadge";
-import type { ScoredCandidate } from "@/types/scout";
-import { MessageCircle, Trophy } from "lucide-react";
+import type { ScoredCandidate, SkillInfluence } from "@/types/scout";
+import { MessageCircle, Trophy, Check, Minus, X, Target } from "lucide-react";
 
 type Props = {
   candidate: ScoredCandidate | null;
