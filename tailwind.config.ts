@@ -57,6 +57,14 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        score: {
+          high: "hsl(var(--score-high))",
+          "high-bg": "hsl(var(--score-high-bg))",
+          mid: "hsl(var(--score-mid))",
+          "mid-bg": "hsl(var(--score-mid-bg))",
+          low: "hsl(var(--score-low))",
+          "low-bg": "hsl(var(--score-low-bg))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
